@@ -1,0 +1,4 @@
+user_id,full_name,email,phone_whatsapp,city,state,role,status
+6b4a5061-ff55-4aae-9270-79fa3b9ea1d1,Palestrante Teste,palestrante@vidaplena.local,(11) 97654-3210,São Paulo,SP,speaker,pending
+a43b7859-b994-4c1c-8a59-a9567d22b0de,Participante Teste,participante@vidaplena.local,(11) 98765-4321,São Paulo,SP,participant,approved
+72af9ecd-05dd-42b2-97ec-ac956f32b3bf,Admin Teste,admin@vidaplena.local,(11) 99999-9999,São Paulo,SP,admin,approved

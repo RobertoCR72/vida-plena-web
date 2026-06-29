@@ -1,0 +1,17 @@
+full_name,email,phone_whatsapp,city,state,role,status
+Admin Teste,admin@vidaplena.local,(11) 99999-9999,São Paulo,SP,admin,approved
+Maria Silva,participante1@vidaplena.local,(11) 98765-4321,São Paulo,SP,participant,approved
+João Santos,participante2@vidaplena.local,(21) 99876-5432,Rio de Janeiro,RJ,participant,approved
+Ana Costa,participante3@vidaplena.local,(31) 98765-4321,Belo Horizonte,MG,participant,approved
+Pedro Oliveira,participante4@vidaplena.local,(41) 99876-5432,Curitiba,PR,participant,approved
+Carlos Mendes,participante5@vidaplena.local,(51) 98765-4321,Porto Alegre,RS,participant,approved
+Lucia Ferreira,participante6@vidaplena.local,(61) 99876-5432,Brasília,DF,participant,approved
+Felipe Rocha,participante7@vidaplena.local,(71) 98765-4321,Salvador,BA,participant,approved
+Marina Ribeiro,participante8@vidaplena.local,(81) 99876-5432,Recife,PE,participant,approved
+Gustavo Dias,participante9@vidaplena.local,(85) 98765-4321,Fortaleza,CE,participant,approved
+Rafael Alves,participante10@vidaplena.local,(92) 99876-5432,Manaus,AM,participant,approved
+Roberto Torres,palestrante1@vidaplena.local,(11) 97654-3210,São Paulo,SP,speaker,pending
+Beatriz Lima,palestrante2@vidaplena.local,(21) 98765-4321,Rio de Janeiro,RJ,speaker,pending
+Marcelo Gomes,palestrante3@vidaplena.local,(31) 99876-5432,Belo Horizonte,MG,speaker,pending
+Carla Vieira,palestrante4@vidaplena.local,(41) 98765-4321,Curitiba,PR,speaker,pending
+Manager Teste,manager@vidaplena.local,(11) 99999-8888,São Paulo,SP,lecture_manager,approved
