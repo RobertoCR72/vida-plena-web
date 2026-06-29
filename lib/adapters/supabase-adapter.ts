@@ -7,7 +7,16 @@
 
 import * as supabaseService from '@/lib/services/supabase.service'
 import { demoLectures, demoEnrollments, demoSpeakers, demoAuditLogs, type DemoEnrollment, type DemoLecture } from '@/lib/demo-data'
-import { saveEnrollmentChange, saveSpeakerChange, saveLectureChange, deleteLectureChange, addLectureChange } from '@/lib/demo-persistence'
+import {
+  saveEnrollmentChange,
+  saveSpeakerChange,
+  saveLectureChange,
+  deleteLectureChange,
+  addLectureChange,
+  mergeEnrollmentsWithChanges,
+  mergeSpeakersWithChanges,
+  mergeLecturesWithChanges,
+} from '@/lib/demo-persistence'
 import type { Talk, Enrollment, SpeakerProfile } from '@/types/database'
 
 type Lecture = Talk
@@ -107,10 +116,18 @@ export async function loadStoredLectures(): Promise<DemoLecture[]> {
   try {
     const lectures = await supabaseService.fetchLectures()
     const mapped = lectures.map(lectureToDemo)
-    return mapped.length > 0 ? mapped : demoLectures
+
+    // Se conseguiu dados do Supabase, mesclar com mudanças em localStorage
+    if (mapped.length > 0) {
+      return mergeLecturesWithChanges(mapped)
+    }
+
+    // Caso contrário, usar demo data mesclada com mudanças em localStorage
+    return mergeLecturesWithChanges(demoLectures)
   } catch (error) {
     console.error('Erro ao carregar palestras do Supabase:', error)
-    return demoLectures
+    // Mesmo com erro, retornar demo data mesclada com mudanças persistidas
+    return mergeLecturesWithChanges(demoLectures)
   }
 }
 
@@ -180,10 +197,18 @@ export async function loadStoredEnrollments(): Promise<DemoEnrollment[]> {
       const lecture = lectureMap.get(enr.lecture_id)
       return enrollmentToDemo(enr, lecture ? lectureToDemo(lecture) : undefined)
     })
-    return mapped.length > 0 ? mapped : demoEnrollments
+
+    // Se conseguiu dados do Supabase, mesclar com mudanças em localStorage
+    if (mapped.length > 0) {
+      return mergeEnrollmentsWithChanges(mapped)
+    }
+
+    // Caso contrário, usar demo data mesclada com mudanças em localStorage
+    return mergeEnrollmentsWithChanges(demoEnrollments)
   } catch (error) {
     console.error('Erro ao carregar inscrições do Supabase:', error)
-    return demoEnrollments
+    // Mesmo com erro, retornar demo data mesclada com mudanças persistidas
+    return mergeEnrollmentsWithChanges(demoEnrollments)
   }
 }
 
@@ -217,10 +242,18 @@ export async function loadStoredSpeakers() {
   try {
     const speakers = await supabaseService.fetchSpeakers()
     const mapped = speakers.map(speakerToStored)
-    return mapped.length > 0 ? mapped : demoSpeakers
+
+    // Se conseguiu dados do Supabase, mesclar com mudanças em localStorage
+    if (mapped.length > 0) {
+      return mergeSpeakersWithChanges(mapped)
+    }
+
+    // Caso contrário, usar demo data mesclada com mudanças em localStorage
+    return mergeSpeakersWithChanges(demoSpeakers)
   } catch (error) {
     console.error('Erro ao carregar palestrantes do Supabase:', error)
-    return demoSpeakers
+    // Mesmo com erro, retornar demo data mesclada com mudanças persistidas
+    return mergeSpeakersWithChanges(demoSpeakers)
   }
 }
 
