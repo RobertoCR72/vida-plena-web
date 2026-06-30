@@ -1,118 +1,66 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useUserRole } from '@/lib/use-user-role'
-import { getPermissions } from '@/lib/rbac'
-import { ClientOnly } from '@/components/client-only'
-import { ProtectedPage } from '@/components/protected-page'
-import { demoLectures, demoEnrollments, type DemoLecture, type DemoEnrollment } from '@/lib/demo-data'
-import { loadStoredLectures, loadStoredEnrollments } from '@/lib/adapters/supabase-adapter'
-import { StatusBadge } from '@/components/status-badge'
+import { useState } from "react"
+import { useUserRole } from "@/lib/use-user-role"
+import { getPermissions } from "@/lib/rbac"
+import { ProtectedPage } from "@/components/protected-page"
+import { LectureCard } from "@/components/lecture-card"
+import { SimpleBarChart } from "@/components/simple-chart"
+import { demoLectures, type DemoLecture } from "@/lib/demo-data"
 
 export default function SpeakerDashboard() {
   const role = useUserRole()
   const permissions = getPermissions(role as any)
-  const [lectures, setLectures] = useState<DemoLecture[]>([])
-  const [enrollments, setEnrollments] = useState<DemoEnrollment[]>([])
+  const lectures = demoLectures as DemoLecture[]
+  const [message, setMessage] = useState("")
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const allLectures = await loadStoredLectures()
-        const allEnrollments = await loadStoredEnrollments()
-        
-        // Para demo: mostrar todas as palestras como do palestrante
-        setLectures([...allLectures])
-        setEnrollments([...allEnrollments])
-      } catch (error) {
-        console.error('Erro ao carregar dados:', error)
-      }
+  const createSpeakerLecture = () => {
+    const next: DemoLecture = {
+      ...demoLectures[0],
+      id: crypto.randomUUID(),
+      title: `Nova palestra do palestrante ${lectures.length + 1}`,
+      theme: "Tema informado pelo palestrante",
+      description: "Palestra criada no painel do palestrante para demonstração.",
+      contentSummary: "Resumo editável pelo palestrante.",
+      status: "draft",
+      confirmed: 0,
+      pending: 0,
+      waitlisted: 0,
+      rating: 0,
     }
-
-    loadData()
-    const interval = setInterval(loadData, 2000)
-    return () => clearInterval(interval)
-  }, [])
-
-  if (!permissions.canEditOwnLectures) {
-    return (
-      <ProtectedPage requiredPermission={(r) => getPermissions(r).canEditOwnLectures}>
-        <div>Carregando...</div>
-      </ProtectedPage>
-    )
+    setMessage(`Palestra "${next.title}" criada e salva.`)
   }
 
   return (
     <ProtectedPage requiredPermission={(r) => getPermissions(r).canEditOwnLectures}>
       <div>
         <h1 className="text-3xl font-bold">Painel do Palestrante</h1>
-        <p className="mt-2 text-slate-600">Gerencie suas palestras e acompanhe as inscrições.</p>
+        <p className="mt-2 text-slate-600">Cadastro, edição, publicação e consulta de inscrições de suas palestras.</p>
+        {message && <div className="mt-4 rounded-md bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700">{message}</div>}
 
-        <ClientOnly>
-          <div className="mt-6 grid gap-6 lg:grid-cols-2">
-            {/* Minhas Palestras */}
-            <section className="rounded-lg border border-slate-200 bg-white p-5">
-              <h2 className="text-lg font-bold">Minhas Palestras</h2>
-              {lectures.length === 0 ? (
-                <p className="mt-4 text-slate-600">Você ainda não criou nenhuma palestra.</p>
-              ) : (
-                <div className="mt-4 space-y-3">
-                  {lectures.map((lecture) => (
-                    <div key={lecture.id} className="rounded-md border border-slate-200 p-3">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <p className="font-semibold">{lecture.title}</p>
-                          <p className="text-sm text-slate-600">{lecture.date} - {lecture.startTime}</p>
-                        </div>
-                        <StatusBadge status={lecture.status} />
-                      </div>
-                      <div className="mt-3 flex gap-2">
-                        <button className="rounded bg-blue-600 px-2 py-1 text-xs font-semibold text-white hover:bg-blue-700">
-                          Editar
-                        </button>
-                        <button className="rounded bg-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-300">
-                          Visualizar Inscritos
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <button className="mt-4 rounded bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700">
-                + Criar Nova Palestra
-              </button>
-            </section>
-
-            {/* Estatísticas de Inscrições */}
-            <section className="rounded-lg border border-slate-200 bg-white p-5">
-              <h2 className="text-lg font-bold">Inscrições</h2>
-              <div className="mt-4 space-y-3">
-                <div className="rounded-md bg-slate-50 p-3">
-                  <p className="text-sm text-slate-600">Total de Inscritos</p>
-                  <p className="text-2xl font-bold text-slate-900">{enrollments.length}</p>
-                </div>
-                <div className="rounded-md bg-green-50 p-3">
-                  <p className="text-sm text-green-600">Confirmados</p>
-                  <p className="text-2xl font-bold text-green-900">
-                    {enrollments.filter(e => e.status === 'confirmed').length}
-                  </p>
-                </div>
-                <div className="rounded-md bg-yellow-50 p-3">
-                  <p className="text-sm text-yellow-600">Pendentes</p>
-                  <p className="text-2xl font-bold text-yellow-900">
-                    {enrollments.filter(e => e.status === 'pending').length}
-                  </p>
-                </div>
-                <div className="rounded-md bg-orange-50 p-3">
-                  <p className="text-sm text-orange-600">Lista de Espera</p>
-                  <p className="text-2xl font-bold text-orange-900">
-                    {enrollments.filter(e => e.status === 'waitlisted').length}
-                  </p>
-                </div>
-              </div>
-            </section>
+        <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5">
+          <h2 className="text-lg font-bold">Nova palestra</h2>
+          <div className="mt-4 grid gap-3 md:grid-cols-4">
+            {["Título", "Tema", "Descrição", "Resumo", "Categoria", "Data", "Início", "Fim", "Duração", "Sala", "Local", "Capacidade"].map((label) => (
+              <input key={label} className="rounded-md border border-slate-300 px-3 py-2 text-sm" placeholder={label} />
+            ))}
+            <button type="button" onClick={createSpeakerLecture} className="rounded-md bg-blue-700 px-4 py-2 text-sm font-semibold text-white">Salvar palestra</button>
           </div>
-        </ClientOnly>
+        </section>
+
+        <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_0.8fr]">
+          <div className="grid gap-4">
+            {lectures.map((lecture) => (
+              <LectureCard key={lecture.id} lecture={lecture} actionHref="/dashboard/speaker" />
+            ))}
+          </div>
+          <section className="h-fit rounded-lg border border-slate-200 bg-white p-5">
+            <h2 className="text-lg font-bold">Ocupação</h2>
+            <div className="mt-4">
+              <SimpleBarChart data={lectures.map((lecture) => ({ label: lecture.title, value: lecture.confirmed }))} />
+            </div>
+          </section>
+        </div>
       </div>
     </ProtectedPage>
   )
