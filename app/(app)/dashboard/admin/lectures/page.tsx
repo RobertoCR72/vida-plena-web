@@ -4,6 +4,9 @@ import { useMemo, useState, useEffect } from 'react'
 import { CalendarDays, Edit3, Save, Trash2 } from 'lucide-react'
 import { StatusBadge } from '@/components/status-badge'
 import { ClientOnly } from '@/components/client-only'
+import { ProtectedPage } from '@/components/protected-page'
+import { useUserRole } from '@/lib/use-user-role'
+import { getPermissions } from '@/lib/rbac'
 import { demoSpeakers, type DemoLecture, type LectureStatus } from '@/lib/demo-data'
 import {
   appendAudit,
@@ -97,6 +100,8 @@ function lectureFromForm(form: LectureFormState, existing?: DemoLecture): DemoLe
 }
 
 export default function AdminLecturesPage() {
+  const role = useUserRole()
+  const permissions = getPermissions(role as any)
   const { lectures: initialLectures, refetch } = useSupabaseLectures(2000) // Auto-refresh a cada 2s
   const [lectures, setLectures] = useState<DemoLecture[]>(initialLectures)
   const [form, setForm] = useState<LectureFormState>(emptyForm)
@@ -244,9 +249,10 @@ export default function AdminLecturesPage() {
   }
 
   return (
+    <ProtectedPage requiredPermission={(r) => getPermissions(r).canEditOwnLectures}>
     <div>
       <h1 className="text-3xl font-bold">Palestras</h1>
-      <p className="mt-2 text-slate-600">Crie, edite, publique, cancele e remova palestras. Tudo fica salvo no navegador e registrado nos logs.</p>
+      <p className="mt-2 text-slate-600">{permissions.canEditAllLectures ? 'Crie, edite, publique, cancele e remova palestras. Tudo fica salvo no navegador e registrado nos logs.' : 'Visualize e edite suas palestras.'}</p>
       {message && <div className="mt-4 rounded-md bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-800">{message}</div>}
 
       <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5">
@@ -325,5 +331,6 @@ export default function AdminLecturesPage() {
         </div>
       </ClientOnly>
     </div>
+    </ProtectedPage>
   )
 }
