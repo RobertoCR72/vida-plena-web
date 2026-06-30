@@ -1,6 +1,21 @@
 # Vida Plena Eventos
 
+🎯 **APLICAÇÃO PUBLICADA:** https://vida-plena-web.vercel.app
+
 Aplicacao web academica para uma ONG gerenciar palestras, palestrantes, participantes, inscricoes, confirmacoes, check-in, cronogramas pessoais, avaliacoes, notificacoes simuladas, auditoria e dashboards.
+
+## ⚠️ Nota sobre Escopo Acadêmico
+
+Este projeto foi desenvolvido com stack **Pro-Code (Next.js + PostgreSQL + Vercel)** para validação técnica. Contudo, a disciplina "Bancos de Dados Visuais & Ferramentas Integradas No-Code" exige manutenção autônoma pela ONG sem dependência de programadores.
+
+**Solução Recomendada para Produção:** Google Sheets + AppSheet  
+- ✅ Banco de dados visual (Google Sheets)
+- ✅ Interface sem código (AppSheet)  
+- ✅ Manutenção autônoma pela ONG
+- ✅ GRÁTIS (primeira app)
+- ✅ Publicação em 10 minutos
+
+Ver: `vida-plena-google-sheets-appsheet-IMPLEMENTACAO.md`
 
 ## Escopo Atual
 
